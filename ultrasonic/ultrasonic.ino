@@ -5,8 +5,10 @@
 
 
 // defines pins numbers
-const int trigPin = 2;
-const int echoPin = 5;
+#define trigPin 4
+#define echoPin 5
+#define ledPin 2
+#define relay 14
 
 // defines variables
 long duration;
@@ -19,7 +21,7 @@ void setup() {
   Serial.println("\n... Starting ESP32 ...");
   Serial.println("Status\tHumidity (%)\tTemperature (C)\t(F)\tHeatIndex (C)\t(F)");
 
-  
+
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 
@@ -28,12 +30,14 @@ void setup() {
     delay(500);
     Serial.println("...");
   }
-  
+
   Serial.println("connected");
+  pinMode(ledPin, OUTPUT);
+  pinMode(relay, OUTPUT);
 }
 
 void loop() {
- delay(1000);
+  delay(1000);
   // Clears the trigPin
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -48,6 +52,17 @@ void loop() {
 
   // Calculating the distance
   distance = duration * 0.034 / 2;
+  if (distance < 6) {
+    digitalWrite(ledPin, LOW);
+    delay(70);
+    digitalWrite(relay, LOW);
+  }
+  if (distance > 40) {
+    digitalWrite(ledPin, HIGH);
+    delay(70);
+    digitalWrite(relay, HIGH);
+  }
+
   // Prints the distance on the Serial Monitor
   Serial.print("Distance cm: ");
   Serial.println(distance);
